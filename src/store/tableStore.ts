@@ -11,11 +11,14 @@ interface TableStore {
   startGame: () => void
   addPendingBet: (amount: number) => void
   clearPendingBet: () => void
-  placeBet: () => void
-  dispatchAction: (action: GameAction) => void
+  placeBet: () => Promise<void>
+  dispatchAction: (action: GameAction) => Promise<void>
 }
 
 let engineInstance: BlackjackEngine | null = null
+
+// Utilitário simples para criar pausas dramáticas (async/await)
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useTableStore = create<TableStore>((set, get) => ({
   state: {
@@ -32,23 +35,18 @@ export const useTableStore = create<TableStore>((set, get) => ({
 
     engineInstance = new BlackjackEngine((newState) => {
       const prevState = get().state
-      
       if (prevState.phase !== 'PAYOUT' && newState.phase === 'PAYOUT') {
         const totalPayout = newState.playerHands.reduce((acc, hand) => acc + hand.payout, 0)
-        if (totalPayout > 0) {
-          useBankrollStore.getState().add(totalPayout)
-        }
+        if (totalPayout > 0) useBankrollStore.getState().add(totalPayout)
       }
-      
       set({ state: newState })
     })
-
     set({ isInitialized: true })
   },
 
   startGame: () => {
     if (engineInstance) {
-      set({ pendingBet: 0 }) // Garante mesa limpa ao iniciar
+      set({ pendingBet: 0 })
       engineInstance.startGame()
     }
   },
@@ -56,34 +54,65 @@ export const useTableStore = create<TableStore>((set, get) => ({
   addPendingBet: (amount: number) => {
     const { balance } = useBankrollStore.getState()
     const currentPending = get().pendingBet
-    
-    // Trava para não apostar mais do que tem no banco
     if (currentPending + amount <= balance) {
       set({ pendingBet: currentPending + amount })
     }
   },
 
-  clearPendingBet: () => {
-    set({ pendingBet: 0 })
-  },
+  clearPendingBet: () => set({ pendingBet: 0 }),
 
-  placeBet: () => {
+  // COREOGRAFIA DO DEAL
+  placeBet: async () => {
     if (!engineInstance) return
-    
     const { pendingBet } = get()
-    if (pendingBet <= 0) return // Trava para não apostar vento
+    if (pendingBet <= 0) return
     
     const { deduct } = useBankrollStore.getState()
     const isApproved = deduct(pendingBet)
     
     if (isApproved) {
-      engineInstance.placeBet(pendingBet)
-    } else {
-      console.warn('Transação negada: Saldo insuficiente')
+      engineInstance.startDealing(pendingBet)
+      
+      await delay(300) // Player Carta 1
+      engineInstance.dealToPlayer()
+      
+      await delay(300) // Dealer Carta 1 (Aberta)
+      engineInstance.dealToDealer(false)
+      
+      await delay(300) // Player Carta 2
+      engineInstance.dealToPlayer()
+      
+      await delay(300) // Dealer Carta 2 (Oculta)
+      engineInstance.dealToDealer(true)
+      
+      await delay(400) // Processa se foi Blackjack natural
+      engineInstance.finishDealing()
     }
   },
 
-  dispatchAction: (action: GameAction) => {
-    if (engineInstance) engineInstance.dispatch(action)
+  // COREOGRAFIA DO JOGO
+  dispatchAction: async (action: GameAction) => {
+    if (!engineInstance) return
+
+    if (action.type === 'HIT') {
+      engineInstance.playerHit()
+    } 
+    else if (action.type === 'STAND') {
+      engineInstance.playerStand()
+      
+      // Vira a carta oculta e dá uma pausa para o player ver o score
+      await delay(800)
+      engineInstance.revealDealerCard()
+
+      // Loop assíncrono: O dealer puxa cartas uma a uma com pausa dramática
+      while (engineInstance.getState().dealerHand.score < 17) {
+        await delay(1000)
+        engineInstance.dealToDealer(false)
+      }
+
+      // Avalia o resultado só depois que as cartas terminaram de cair
+      await delay(800)
+      engineInstance.evaluateResults()
+    }
   }
 }))
