@@ -3,11 +3,15 @@
 import { useTableStore } from '@/store/tableStore'
 import { Button } from '@/components/ui/Button'
 import { Chip } from '@/components/ui/Chip'
+import { useGameShortcuts } from '@/hooks/useGameShortcuts'
 
 const AVAILABLE_CHIPS = [10, 50, 100, 500, 1000]
 
 export function ActionBar() {
   const { state, pendingBet, startGame, placeBet, dispatchAction, addPendingBet, clearPendingBet } = useTableStore()
+
+  // Ativa os atalhos de teclado
+  useGameShortcuts()
 
   return (
     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
