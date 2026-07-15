@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Midnight Arcade - Styleguide</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700;900&display=swap"
+        rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        mono: ["Space Grotesk", "monospace"],
+                    },
+                    colors: {
+                        arcade: {
+                            base: "#0B0C10",
+                            surface: "#181A20",
+                            glow: "#3B28CC",
+                            action: "#FFD700", // Sua vez / Destaque
+                            chip100: "#334155",
+                            chip500: "#8B5CF6",
+                            chip1k: "#EAB308",
+                            chip5k: "#F97316",
+                        },
+                    },
+                    boxShadow: {
+                        neon: "0 0 15px rgba(255, 215, 0, 0.4)",
+                        card: "0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 10px 10px -5px rgba(0, 0, 0, 0.5)",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Ajuste fino para a ambientação de mesa */
+        body {
+            background-color: #0b0c10;
+            background-image: radial-gradient(circle at 50% 30%,
+                    rgba(59, 40, 204, 0.2) 0%,
+                    rgba(11, 12, 16, 1) 70%);
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+
+<body class="text-white min-h-screen p-10 antialiased selection:bg-arcade-action selection:text-black">
+    <div class="max-w-5xl mx-auto space-y-20">
+        <header class="border-b border-white/10 pb-6">
+            <h1 class="text-3xl font-bold font-mono tracking-tight">
+                Styleguide: Midnight Arcade
+            </h1>
+            <p class="text-gray-400 mt-2">
+                Testes de contraste, tipografia e feedback visual.
+            </p>
+        </header>
+
+        <section class="space-y-6">
+            <h2 class="text-sm uppercase tracking-widest text-gray-500 font-semibold">
+                1. HUD Principal (Pote Central)
+            </h2>
+            <div
+                class="flex flex-col items-center justify-center p-12 bg-arcade-surface/30 rounded-3xl border border-white/5 backdrop-blur-sm">
+                <span class="text-gray-400 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                    Total Pot
+                </span>
+                <div class="text-7xl font-mono font-black mt-2 tracking-tighter">
+                    54,250
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-6">
+            <h2 class="text-sm uppercase tracking-widest text-gray-500 font-semibold">
+                2. Action Bar & Interações
+            </h2>
+            <div
+                class="flex items-center gap-4 bg-arcade-surface/50 p-4 rounded-full border border-white/10 w-fit backdrop-blur-md">
+                <button
+                    class="flex items-center gap-2 px-6 py-3 rounded-full text-red-400 hover:bg-red-400/10 transition-colors active:scale-95">
+                    <span class="font-medium">Fold</span>
+                    <span class="text-xs opacity-50 font-mono">F</span>
+                </button>
+
+                <button
+                    class="flex items-center gap-2 px-6 py-3 rounded-full text-white hover:bg-white/10 transition-colors active:scale-95">
+                    <span class="font-medium">Check</span>
+                    <span class="text-xs opacity-50 font-mono">C</span>
+                </button>
+
+                <button
+                    class="flex items-center gap-2 px-6 py-3 rounded-full text-green-400 hover:bg-green-400/10 transition-colors active:scale-95">
+                    <span class="font-medium">Raise</span>
+                    <span class="text-xs opacity-50 font-mono">R</span>
+                </button>
+
+                <button
+                    class="ml-4 flex items-center gap-3 px-8 py-3 rounded-full bg-arcade-action text-black font-bold shadow-neon transition-transform hover:scale-105 active:scale-95">
+                    Your Turn!
+                    <span class="font-mono bg-black/20 px-2 py-0.5 rounded text-sm">0:14</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="space-y-6">
+            <h2 class="text-sm uppercase tracking-widest text-gray-500 font-semibold">
+                3. Player Plates (HUD Contextual)
+            </h2>
+            <div class="flex gap-16">
+                <div class="relative flex flex-col items-center">
+                    <div
+                        class="absolute -top-4 bg-arcade-action text-black text-xs font-bold px-3 py-1 rounded-full shadow-neon z-10">
+                        Thinking
+                    </div>
+                    <div class="w-20 h-20 rounded-full bg-gray-800 border-4 border-arcade-action p-1 relative">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Igor" alt="Avatar"
+                            class="w-full h-full rounded-full bg-gray-700" />
+                    </div>
+                    <div class="mt-3 text-center">
+                        <div class="font-medium">You</div>
+                        <div class="font-mono text-sm text-gray-400">1,250</div>
+                    </div>
+                </div>
+
+                <div class="relative flex flex-col items-center opacity-50">
+                    <div class="absolute -top-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10">
+                        Folded
+                    </div>
+                    <div class="w-20 h-20 rounded-full bg-gray-800 border-4 border-gray-600 p-1">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Steve" alt="Avatar"
+                            class="w-full h-full rounded-full bg-gray-700 grayscale" />
+                    </div>
+                    <div class="mt-3 text-center">
+                        <div class="font-medium">Dealer</div>
+                        <div class="font-mono text-sm text-gray-400">8,400</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-2 gap-10">
+            <section class="space-y-6">
+                <h2 class="text-sm uppercase tracking-widest text-gray-500 font-semibold">
+                    4. Chips (Fichas Flat 3D)
+                </h2>
+                <div class="flex gap-4 p-8 bg-arcade-surface/30 rounded-3xl border border-white/5">
+                    <div
+                        class="w-14 h-14 rounded-full bg-arcade-chip100 border-4 border-gray-400 border-dashed flex items-center justify-center font-mono font-bold shadow-lg">
+                        100
+                    </div>
+                    <div
+                        class="w-14 h-14 rounded-full bg-arcade-chip500 border-4 border-purple-300 border-dashed flex items-center justify-center font-mono font-bold shadow-lg">
+                        500
+                    </div>
+                    <div
+                        class="w-14 h-14 rounded-full bg-arcade-chip1k border-4 border-yellow-200 border-dashed flex items-center justify-center text-black font-mono font-bold shadow-lg text-sm">
+                        1K
+                    </div>
+                    <div
+                        class="w-14 h-14 rounded-full bg-arcade-chip5k border-4 border-orange-200 border-dashed flex items-center justify-center text-black font-mono font-bold shadow-lg text-sm">
+                        5K
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-6">
+                <h2 class="text-sm uppercase tracking-widest text-gray-500 font-semibold">
+                    5. Cards (Centro Focado)
+                </h2>
+                <div class="flex p-8 bg-arcade-surface/30 rounded-3xl border border-white/5 relative h-60">
+                    <div
+                        class="absolute left-10 top-6 w-32 h-44 bg-white rounded-2xl shadow-card flex items-center justify-center text-black font-mono transform -rotate-6 hover:-translate-y-2 transition-transform cursor-pointer">
+                        <div class="flex flex-col items-center leading-none">
+                            <span class="text-6xl font-black text-red-600">A</span>
+                            <span class="text-5xl text-red-600 mt-2">♥</span>
+                        </div>
+                    </div>
+                    <div
+                        class="absolute left-28 top-6 w-32 h-44 bg-white rounded-2xl shadow-card flex items-center justify-center text-black font-mono transform rotate-3 hover:-translate-y-2 transition-transform cursor-pointer z-10">
+                        <div class="flex flex-col items-center leading-none">
+                            <span class="text-6xl font-black text-black">K</span>
+                            <span class="text-5xl text-black mt-2">♠</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>
