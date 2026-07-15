@@ -2,11 +2,14 @@
 
 import { useEffect } from 'react'
 import { useTableStore } from '@/store/tableStore'
+import { useBankrollStore } from '@/store/bankrollStore'
 import { ActionBar } from '@/components/game/ActionBar'
 import { Hand } from '@/components/game/Hand'
 
 export default function BlackjackTable() {
   const { isInitialized, initializeTable, state } = useTableStore()
+  // Puxando o saldo direto do Zustand
+  const balance = useBankrollStore((state) => state.balance)
 
   useEffect(() => {
     if (!isInitialized) {
@@ -16,7 +19,6 @@ export default function BlackjackTable() {
 
   if (!isInitialized) return null
 
-  // Mapeia o resultado do Core para as cores do Tailwind e Neon Shadow
   const getResultConfig = (result: string) => {
     switch (result) {
       case 'WIN': 
@@ -38,18 +40,25 @@ export default function BlackjackTable() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-between p-10 relative overflow-hidden">
       
-      {/* Topo: Logo */}
-      <div className="text-center w-full">
+      {/* Topo: Logo e HUD de Saldo */}
+      <div className="w-full flex items-center justify-between px-4">
         <h1 className="text-3xl font-mono font-black text-white/50 tracking-tighter">
           GAMBLY
         </h1>
+        
+        {/* Bankroll HUD */}
+        <div className="flex items-center gap-3 bg-arcade-surface/50 border border-white/10 px-6 py-2 rounded-full backdrop-blur-md">
+          <span className="text-gray-400 font-medium text-sm uppercase tracking-widest">Bank</span>
+          <span className="font-mono font-bold text-white text-xl">
+            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(balance)}
+          </span>
+        </div>
       </div>
 
       {/* Centro: A Mesa de Jogo */}
       <div className="flex flex-col items-center justify-center w-full flex-1 mt-10 relative">
         <Hand hand={state.dealerHand} label="Dealer" />
         
-        {/* Container invisível de altura fixa para o Banner não quebrar o layout */}
         <div className="h-24 flex items-center justify-center w-full my-6">
           {state.phase === 'PAYOUT' && (
             <div className={`text-4xl font-mono font-black animate-bounce z-50 bg-arcade-surface/90 border border-white/10 px-8 py-4 rounded-full backdrop-blur-md ${bannerConfig.color} ${bannerConfig.shadow}`}>
