@@ -1,5 +1,6 @@
 import { Hand as HandType } from '@/core/blackjack/types'
-import { Card } from '@/components/ui/Card' 
+import { Card } from '@/components/ui/Card'
+import { motion } from 'framer-motion'
 
 interface HandProps {
   hand: HandType
@@ -23,24 +24,40 @@ export function Hand({ hand, label }: HandProps) {
       </div>
 
       <div className="flex justify-center">
-        {hand.cards.map((card, index) => (
-          <div 
-            key={index} 
-            className="relative transition-all duration-300"
-            style={{ 
-              marginLeft: index > 0 ? '-4rem' : '0',
-              zIndex: index,
-              transform: `rotate(${index === hand.cards.length - 1 ? '2deg' : '0deg'})` 
-            }}
-          >
-            {/* O Hand traduz a lógica da Engine para props burras da UI */}
-            <Card 
-              suit={card.suit} 
-              rank={card.rank} 
-              isFacedown={card.isHidden} 
-            />
-          </div>
-        ))}
+        {hand.cards.map((card, index) => {
+          const isLastCard = index === hand.cards.length - 1
+          
+          return (
+            <motion.div 
+              key={`${label}-${index}-${card.rank}-${card.suit}`} // Key única forte para garantir que a animação rode sempre que uma nova carta entrar
+              initial={{ opacity: 0, y: -200, x: 200, scale: 0.5 }} // Nasce invisível, menor e no canto superior direito
+              animate={{ 
+                opacity: 1, 
+                y: 0, 
+                x: 0, 
+                scale: 1,
+                rotate: isLastCard ? 2 : 0 // Joga aquela leve rotação na última carta direto na animação
+              }}
+              transition={{
+                type: "spring",
+                damping: 20, // Controla o "freio" do efeito elástico
+                stiffness: 100, // Controla a velocidade/tensão da mola
+                delay: index * 0.15 // Efeito Cascata: cada carta espera 150ms a mais que a anterior
+              }}
+              className="relative"
+              style={{ 
+                marginLeft: index > 0 ? '-4rem' : '0',
+                zIndex: index
+              }}
+            >
+              <Card 
+                suit={card.suit} 
+                rank={card.rank} 
+                isFacedown={card.isHidden} 
+              />
+            </motion.div>
+          )
+        })}
       </div>
     </div>
   )
