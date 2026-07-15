@@ -51,7 +51,12 @@ export const useTableStore = create<TableStore>((set, get) => ({
         if (totalPayout > 0) useBankrollStore.getState().add(totalPayout)
       }
       set({ state: newState })
-    })
+    });
+
+    // * EXPÕES SCRIPT DE DEBUG 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).blackjackEngine = engineInstance;
+
     set({ isInitialized: true })
   },
 
