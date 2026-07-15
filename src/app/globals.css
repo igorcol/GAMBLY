@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Cores - Midnight Arcade */
+  --color-arcade-base: #0B0C10;
+  --color-arcade-surface: #181A20;
+  --color-arcade-glow: #3B28CC;
+  --color-arcade-action: #FFD700;
+  
+  /* Fichas */
+  --color-arcade-chip100: #334155;
+  --color-arcade-chip500: #8B5CF6;
+  --color-arcade-chip1k: #EAB308;
+  --color-arcade-chip5k: #F97316;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Efeitos e Sombras */
+  --shadow-neon: 0 0 15px rgba(255, 215, 0, 0.4);
+  --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Mapeamento de Fontes (serão injetadas via next/font no layout) */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-space-grotesk);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-arcade-base);
+  /* O glow da mesa direto no background */
+  background-image: radial-gradient(circle at 50% 30%, rgba(59, 40, 204, 0.2) 0%, rgba(11, 12, 16, 1) 70%);
+  background-attachment: fixed;
+  color: #ffffff; /* Fundo escuro exige texto claro padrão */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilitário para forçar a seleção de texto a combinar com a action color */
+::selection {
+  background-color: var(--color-arcade-action);
+  color: #000000;
 }
