@@ -5,10 +5,10 @@ import { useTableStore } from '@/store/tableStore'
 import { useBankrollStore } from '@/store/bankrollStore'
 import { ActionBar } from '@/components/game/ActionBar'
 import { Hand } from '@/components/game/Hand'
+import { motion } from 'framer-motion'
 
 export default function BlackjackTable() {
   const { isInitialized, initializeTable, state } = useTableStore()
-  // Puxando o saldo direto do Zustand
   const balance = useBankrollStore((state) => state.balance)
 
   useEffect(() => {
@@ -46,7 +46,6 @@ export default function BlackjackTable() {
           GAMBLY
         </h1>
         
-        {/* Bankroll HUD */}
         <div className="flex items-center gap-3 bg-arcade-surface/50 border border-white/10 px-6 py-2 rounded-full backdrop-blur-md">
           <span className="text-gray-400 font-medium text-sm uppercase tracking-widest">Bank</span>
           <span className="font-mono font-bold text-white text-xl">
@@ -61,9 +60,13 @@ export default function BlackjackTable() {
         
         <div className="h-24 flex items-center justify-center w-full my-6">
           {state.phase === 'PAYOUT' && (
-            <div className={`text-4xl font-mono font-black animate-bounce z-50 bg-arcade-surface/90 border border-white/10 px-8 py-4 rounded-full backdrop-blur-md ${bannerConfig.color} ${bannerConfig.shadow}`}>
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className={`text-4xl font-mono font-black z-50 bg-arcade-surface/90 border border-white/10 px-8 py-4 rounded-full backdrop-blur-md ${bannerConfig.color} ${bannerConfig.shadow}`}
+            >
               {bannerConfig.text}
-            </div>
+            </motion.div>
           )}
         </div>
         

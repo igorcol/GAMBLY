@@ -26,35 +26,25 @@ export function Hand({ hand, label }: HandProps) {
       <div className="flex justify-center">
         {hand.cards.map((card, index) => {
           const isLastCard = index === hand.cards.length - 1
-          
           return (
             <motion.div 
-              key={`${label}-${index}-${card.rank}-${card.suit}`} // Key única forte para garantir que a animação rode sempre que uma nova carta entrar
-              initial={{ opacity: 0, y: -200, x: 200, scale: 0.5 }} // Nasce invisível, menor e no canto superior direito
+              key={`${label}-${index}-${card.rank}-${card.suit}`}
+              initial={{ opacity: 0, y: -200, x: 200, scale: 0.5 }}
               animate={{ 
                 opacity: 1, 
                 y: 0, 
                 x: 0, 
                 scale: 1,
-                rotate: isLastCard ? 2 : 0 // Joga aquela leve rotação na última carta direto na animação
+                rotate: isLastCard ? 2 : 0 
               }}
-              transition={{
-                type: "spring",
-                damping: 20, // Controla o "freio" do efeito elástico
-                stiffness: 100, // Controla a velocidade/tensão da mola
-                delay: index * 0.15 // Efeito Cascata: cada carta espera 150ms a mais que a anterior
-              }}
+              transition={{ type: "spring", damping: 20, stiffness: 100 }}
               className="relative"
               style={{ 
                 marginLeft: index > 0 ? '-4rem' : '0',
                 zIndex: index
               }}
             >
-              <Card 
-                suit={card.suit} 
-                rank={card.rank} 
-                isFacedown={card.isHidden} 
-              />
+              <Card suit={card.suit} rank={card.rank} isFacedown={card.isHidden} />
             </motion.div>
           )
         })}
