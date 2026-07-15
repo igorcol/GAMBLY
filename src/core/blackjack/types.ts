@@ -24,7 +24,9 @@ export interface Hand {
   isBusted: boolean;
   isStanding: boolean;
   score: number;
-  result: HandResult; // NOVO
+  result: HandResult;     
+  bet: number;            // Valor apostado na mão atual
+  payout: number;         // Valor retornado na mão atual 
 }
 
 export interface GameState {
