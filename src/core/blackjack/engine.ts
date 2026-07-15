@@ -14,9 +14,9 @@ export class BlackjackEngine {
   private getInitialState(): GameState {
     return {
       phase: 'IDLE',
-      playerHands: [{ cards: [], isBusted: false, isStanding: false, score: 0 }],
+      playerHands: [{ cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE' }],
       activeHandIndex: 0,
-      dealerHand: { cards: [], isBusted: false, isStanding: false, score: 0 }
+      dealerHand: { cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE' }
     }
   }
 
@@ -91,8 +91,9 @@ export class BlackjackEngine {
         this.updateScores()
         
         if (activeHand.isBusted) {
-          this.state.phase = 'PAYOUT' // Se estourar 21, acabou o turno
+          this.state.phase = 'PAYOUT'
           this.revealDealerCard()
+          this.evaluateResults() // NOVO: Avalia o resultado quando estoura
         }
         break
         
@@ -100,7 +101,7 @@ export class BlackjackEngine {
         activeHand.isStanding = true
         this.state.phase = 'DEALER_TURN'
         this.playDealerTurn()
-        return // playDealerTurn já lida com a emissão final
+        return 
     }
 
     this.emitState()
@@ -116,13 +117,32 @@ export class BlackjackEngine {
   private playDealerTurn() {
     this.revealDealerCard()
 
-    // Regra clássica: Dealer sempre compra até ter 17 ou mais
     while (this.state.dealerHand.score < 17) {
       this.state.dealerHand.cards.push(this.drawCard()!)
       this.updateScores()
     }
 
     this.state.phase = 'PAYOUT'
+    this.evaluateResults() 
     this.emitState()
+  }
+
+  private evaluateResults() {
+    const dealerScore = this.state.dealerHand.score
+    const dealerBusted = this.state.dealerHand.isBusted
+
+    for (const hand of this.state.playerHands) {
+      if (hand.isBusted) {
+        hand.result = 'BUST'
+      } else if (dealerBusted) {
+        hand.result = 'WIN'
+      } else if (hand.score > dealerScore) {
+        hand.result = 'WIN'
+      } else if (hand.score < dealerScore) {
+        hand.result = 'LOSS'
+      } else {
+        hand.result = 'PUSH'
+      }
+    }
   }
 }
