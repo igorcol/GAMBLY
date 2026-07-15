@@ -1,10 +1,12 @@
-import { ButtonHTMLAttributes } from 'react'
+'use client'
 
-interface ChipProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+import { ButtonHTMLAttributes } from 'react'
+import { motion, HTMLMotionProps } from 'framer-motion'
+
+interface ChipProps extends Omit<HTMLMotionProps<"button">, "children"> {
   amount: number
 }
 
-// Mapeamento de valores para cores
 const CHIP_COLORS: Record<number, string> = {
   10: 'bg-slate-700 ring-slate-500 text-white',
   50: 'bg-blue-800 ring-blue-500 text-white',
@@ -17,17 +19,17 @@ export function Chip({ amount, className = '', ...props }: ChipProps) {
   const colorClass = CHIP_COLORS[amount] || 'bg-arcade-surface ring-white/20 text-white'
 
   return (
-    <button
-      className={`relative w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm shadow-[0_4px_10px_rgba(0,0,0,0.5)] ring-4 ring-inset transition-all hover:-translate-y-2 hover:shadow-neon active:scale-95 ${colorClass} ${className}`}
+    <motion.button
+      className={`relative w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm shadow-[0_4px_10px_rgba(0,0,0,0.5)] ring-4 ring-inset transition-all hover:shadow-neon ${colorClass} ${className}`}
+      whileHover={{ y: -5 }} // Hover agora é gerenciado pelo Framer
+      whileTap={{ scale: 0.9 }} // Efeito de clique físico
       {...props}
     >
-      {/* Borda tracejada */}
       <div className="absolute inset-1.5 rounded-full border border-dashed border-current opacity-60 pointer-events-none"></div>
       
-      {/* Formatação abreviada */}
       <span className="z-10 drop-shadow-md">
         {amount >= 1000 ? `${amount / 1000}k` : amount}
       </span>
-    </button>
+    </motion.button>
   )
 }

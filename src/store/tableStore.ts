@@ -3,10 +3,16 @@ import { BlackjackEngine } from '../core/blackjack/engine'
 import { GameState, GameAction } from '../core/blackjack/types'
 import { useBankrollStore } from './bankrollStore'
 
+interface PendingChip {
+  id: string
+  amount: number
+}
+
 interface TableStore {
   state: GameState
   isInitialized: boolean
   pendingBet: number
+  pendingChips: PendingChip[] // NOVO: Guarda a pilha visual de fichas
   initializeTable: () => void
   startGame: () => void
   addPendingBet: (amount: number) => void
@@ -17,7 +23,6 @@ interface TableStore {
 
 let engineInstance: BlackjackEngine | null = null
 
-// Utilitário simples para criar pausas dramáticas (async/await)
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useTableStore = create<TableStore>((set, get) => ({
@@ -29,6 +34,7 @@ export const useTableStore = create<TableStore>((set, get) => ({
   },
   isInitialized: false,
   pendingBet: 0,
+  pendingChips: [],
 
   initializeTable: () => {
     if (engineInstance) return
@@ -46,22 +52,27 @@ export const useTableStore = create<TableStore>((set, get) => ({
 
   startGame: () => {
     if (engineInstance) {
-      set({ pendingBet: 0 })
+      set({ pendingBet: 0, pendingChips: [] }) // Limpa a mesa ao reiniciar
       engineInstance.startGame()
     }
   },
 
   addPendingBet: (amount: number) => {
     const { balance } = useBankrollStore.getState()
-    const currentPending = get().pendingBet
-    if (currentPending + amount <= balance) {
-      set({ pendingBet: currentPending + amount })
+    const { pendingBet, pendingChips } = get()
+    
+    if (pendingBet + amount <= balance) {
+      // Cria um ID único para o Framer Motion conseguir rastrear a animação individual de cada ficha
+      const newChip = { id: `${Date.now()}-${Math.random()}`, amount }
+      set({ 
+        pendingBet: pendingBet + amount,
+        pendingChips: [...pendingChips, newChip]
+      })
     }
   },
 
-  clearPendingBet: () => set({ pendingBet: 0 }),
+  clearPendingBet: () => set({ pendingBet: 0, pendingChips: [] }),
 
-  // COREOGRAFIA DO DEAL
   placeBet: async () => {
     if (!engineInstance) return
     const { pendingBet } = get()
@@ -72,25 +83,19 @@ export const useTableStore = create<TableStore>((set, get) => ({
     
     if (isApproved) {
       engineInstance.startDealing(pendingBet)
-      
-      await delay(300) // Player Carta 1
+      await delay(300)
       engineInstance.dealToPlayer()
-      
-      await delay(300) // Dealer Carta 1 (Aberta)
+      await delay(300)
       engineInstance.dealToDealer(false)
-      
-      await delay(300) // Player Carta 2
+      await delay(300)
       engineInstance.dealToPlayer()
-      
-      await delay(300) // Dealer Carta 2 (Oculta)
+      await delay(300)
       engineInstance.dealToDealer(true)
-      
-      await delay(400) // Processa se foi Blackjack natural
+      await delay(400)
       engineInstance.finishDealing()
     }
   },
 
-  // COREOGRAFIA DO JOGO
   dispatchAction: async (action: GameAction) => {
     if (!engineInstance) return
 
@@ -99,18 +104,12 @@ export const useTableStore = create<TableStore>((set, get) => ({
     } 
     else if (action.type === 'STAND') {
       engineInstance.playerStand()
-      
-      // Vira a carta oculta e dá uma pausa para o player ver o score
       await delay(800)
       engineInstance.revealDealerCard()
-
-      // Loop assíncrono: O dealer puxa cartas uma a uma com pausa dramática
       while (engineInstance.getState().dealerHand.score < 17) {
         await delay(1000)
         engineInstance.dealToDealer(false)
       }
-
-      // Avalia o resultado só depois que as cartas terminaram de cair
       await delay(800)
       engineInstance.evaluateResults()
     }

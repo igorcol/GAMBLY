@@ -4,46 +4,66 @@ import { useTableStore } from '@/store/tableStore'
 import { Button } from '@/components/ui/Button'
 import { Chip } from '@/components/ui/Chip'
 import { useGameShortcuts } from '@/hooks/useGameShortcuts'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const AVAILABLE_CHIPS = [10, 50, 100, 500, 1000]
 
 export function ActionBar() {
-  const { state, pendingBet, startGame, placeBet, dispatchAction, addPendingBet, clearPendingBet } = useTableStore()
-
-  // Ativa os atalhos de teclado
+  const { state, pendingBet, pendingChips, startGame, placeBet, dispatchAction, addPendingBet, clearPendingBet } = useTableStore()
+  
   useGameShortcuts()
 
   return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-full max-w-2xl px-4">
       
-      {/* Fase de Aposta: Mostra as Fichas e o Painel de Confirmação */}
       {state.phase === 'BETTING' && (
-        <div className="flex flex-col items-center gap-6 bg-arcade-surface/50 p-6 rounded-3xl border border-white/10 backdrop-blur-md">
+        <div className="flex flex-col items-center gap-6 bg-arcade-surface/50 p-6 rounded-3xl border border-white/10 backdrop-blur-md w-full">
           
-          {/* Valor pendente e botões de ação */}
-          <div className="flex items-center gap-6 w-full justify-between">
+          <div className="flex items-center w-full justify-between px-4">
             <button 
               onClick={clearPendingBet}
               disabled={pendingBet === 0}
-              className="text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed font-mono text-sm transition-colors"
+              className="text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed font-mono text-sm transition-colors w-24 text-left"
             >
               CLEAR
             </button>
             
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-gray-500 font-mono tracking-widest uppercase">Total Bet</span>
-              <span className="text-2xl font-mono font-black text-arcade-action">${pendingBet}</span>
+            {/* NOVO: A Torre de Fichas e o Valor Total */}
+            <div className="flex flex-col items-center min-h-30 justify-end">
+              <div className="relative w-16 h-16 flex items-end justify-center mb-4">
+                <AnimatePresence>
+                  {pendingChips.map((chip, index) => (
+                    <motion.div
+                      key={chip.id}
+                      initial={{ opacity: 0, y: 50, scale: 0.5 }} // Nasce invisível e voa de baixo
+                      animate={{ opacity: 1, y: -(index * 6), scale: 1 }} // Sobe empilhando (6px por ficha)
+                      exit={{ opacity: 0, scale: 0, transition: { duration: 0.2 } }} // Some ao dar CLEAR ou DEAL
+                      className="absolute"
+                      style={{ zIndex: index }}
+                    >
+                      {/* Renderiza a ficha desabilitada apenas como visual */}
+                      <Chip amount={chip.amount} disabled className="shadow-xl pointer-events-none" />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-gray-500 font-mono tracking-widest uppercase mb-1">Total Bet</span>
+                <span className="text-2xl font-mono font-black text-arcade-action">${pendingBet}</span>
+              </div>
             </div>
 
-            <Button 
-              variant="primary" 
-              label="DEAL" 
-              onClick={placeBet} 
-              disabled={pendingBet === 0}
-            />
+            <div className="w-24 flex justify-end">
+              <Button 
+                variant="primary" 
+                label="DEAL" 
+                onClick={placeBet} 
+                disabled={pendingBet === 0}
+              />
+            </div>
           </div>
 
-          {/* Fileira de Fichas para somar a aposta */}
           <div className="flex items-center gap-4 pt-4 border-t border-white/10 w-full justify-center">
             {AVAILABLE_CHIPS.map(amount => (
               <Chip 
@@ -56,39 +76,21 @@ export function ActionBar() {
         </div>
       )}
 
-      {/* Container Padrão para as outras fases */}
       {state.phase !== 'BETTING' && (
         <div className="flex items-center gap-4 bg-arcade-surface/50 p-4 rounded-full border border-white/10 backdrop-blur-md transition-all">
-          
           {(state.phase === 'IDLE' || state.phase === 'PAYOUT') && (
-            <Button 
-              variant="primary" 
-              label={state.phase === 'PAYOUT' ? 'Play Again' : 'Start Game'} 
-              onClick={startGame} 
-            />
+            <Button variant="primary" label={state.phase === 'PAYOUT' ? 'Play Again' : 'Start Game'} onClick={startGame} />
           )}
 
           {state.phase === 'PLAYER_TURN' && (
             <>
-              <Button 
-                variant="danger" 
-                label="Stand" 
-                shortcut="S" 
-                onClick={() => dispatchAction({ type: 'STAND' })} 
-              />
-              <Button 
-                variant="success" 
-                label="Hit" 
-                shortcut="H" 
-                onClick={() => dispatchAction({ type: 'HIT' })} 
-              />
+              <Button variant="danger" label="Stand" shortcut="S" onClick={() => dispatchAction({ type: 'STAND' })} />
+              <Button variant="success" label="Hit" shortcut="H" onClick={() => dispatchAction({ type: 'HIT' })} />
             </>
           )}
 
           {(state.phase === 'DEALING' || state.phase === 'DEALER_TURN') && (
-            <span className="text-gray-400 font-mono text-sm px-6 animate-pulse">
-              Dealer is playing...
-            </span>
+            <span className="text-gray-400 font-mono text-sm px-6 animate-pulse">Dealer is playing...</span>
           )}
         </div>
       )}
