@@ -4,7 +4,7 @@ import { useTableStore } from '@/store/tableStore'
 import { Button } from '@/components/ui/Button'
 import { Chip } from '@/components/ui/Chip'
 import { useGameShortcuts } from '@/hooks/useGameShortcuts'
-import { motion, AnimatePresence } from 'framer-motion'
+import { BetStack } from '@/components/game/BetStack' // NOVO IMPORT
 
 const AVAILABLE_CHIPS = [10, 50, 100, 500, 1000]
 
@@ -14,7 +14,7 @@ export function ActionBar() {
   useGameShortcuts()
 
   return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-full max-w-2xl px-4">
+    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-full max-w-2xl px-4 z-50">
       
       {state.phase === 'BETTING' && (
         <div className="flex flex-col items-center gap-6 bg-arcade-surface/50 p-6 rounded-3xl border border-white/10 backdrop-blur-md w-full">
@@ -28,24 +28,10 @@ export function ActionBar() {
               CLEAR
             </button>
             
-            {/* NOVO: A Torre de Fichas e o Valor Total */}
             <div className="flex flex-col items-center min-h-30 justify-end">
-              <div className="relative w-16 h-16 flex items-end justify-center mb-4">
-                <AnimatePresence>
-                  {pendingChips.map((chip, index) => (
-                    <motion.div
-                      key={chip.id}
-                      initial={{ opacity: 0, y: 50, scale: 0.5 }} // Nasce invisível e voa de baixo
-                      animate={{ opacity: 1, y: -(index * 6), scale: 1 }} // Sobe empilhando (6px por ficha)
-                      exit={{ opacity: 0, scale: 0, transition: { duration: 0.2 } }} // Some ao dar CLEAR ou DEAL
-                      className="absolute"
-                      style={{ zIndex: index }}
-                    >
-                      {/* Renderiza a ficha desabilitada apenas como visual */}
-                      <Chip amount={chip.amount} disabled className="shadow-xl pointer-events-none" />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+              {/* O componente inteligente assume a renderização aqui */}
+              <div className="mb-4">
+                <BetStack chips={pendingChips} phase={state.phase} />
               </div>
 
               <div className="flex flex-col items-center">
@@ -55,22 +41,13 @@ export function ActionBar() {
             </div>
 
             <div className="w-24 flex justify-end">
-              <Button 
-                variant="primary" 
-                label="DEAL" 
-                onClick={placeBet} 
-                disabled={pendingBet === 0}
-              />
+              <Button variant="primary" label="DEAL" onClick={placeBet} disabled={pendingBet === 0} />
             </div>
           </div>
 
           <div className="flex items-center gap-4 pt-4 border-t border-white/10 w-full justify-center">
             {AVAILABLE_CHIPS.map(amount => (
-              <Chip 
-                key={amount} 
-                amount={amount} 
-                onClick={() => addPendingBet(amount)} 
-              />
+              <Chip key={amount} amount={amount} onClick={() => addPendingBet(amount)} />
             ))}
           </div>
         </div>
