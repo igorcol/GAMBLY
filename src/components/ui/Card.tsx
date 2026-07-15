@@ -1,31 +1,37 @@
-import { Card as CardType } from '@/core/blackjack/types'
+import { HTMLAttributes } from 'react'
 
-interface CardProps {
-  card: CardType
-  className?: string
+export type Suit = 'HEARTS' | 'DIAMONDS' | 'CLUBS' | 'SPADES'
+
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  suit?: Suit
+  rank?: string
+  isFacedown?: boolean
 }
 
-const SUIT_SYMBOLS: Record<CardType['suit'], string> = {
+const SUIT_SYMBOLS: Record<Suit, string> = {
   HEARTS: '♥',
   DIAMONDS: '♦',
   CLUBS: '♣',
   SPADES: '♠'
 }
 
-const SUIT_COLORS: Record<CardType['suit'], string> = {
+const SUIT_COLORS: Record<Suit, string> = {
   HEARTS: 'text-red-600',
   DIAMONDS: 'text-red-600',
   CLUBS: 'text-black',
   SPADES: 'text-black'
 }
 
-export function Card({ card, className = '' }: CardProps) {
+export function Card({ suit, rank, isFacedown = false, className = '', ...props }: CardProps) {
   const baseStyles = 'w-32 h-44 rounded-2xl shadow-card flex items-center justify-center transition-transform hover:-translate-y-2 select-none'
 
-  // Verso da carta (Dealer Hidden Card)
-  if (card.isHidden) {
+  // Verso da carta genérica
+  if (isFacedown || !suit || !rank) {
     return (
-      <div className={`${baseStyles} bg-arcade-surface border-2 border-arcade-glow/50 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-arcade-glow/20 to-transparent ${className}`}>
+      <div 
+        className={`${baseStyles} bg-arcade-surface border-2 border-arcade-glow/50 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-arcade-glow/20 to-transparent ${className}`}
+        {...props}
+      >
         <div className="w-20 h-28 border border-white/10 rounded-lg flex items-center justify-center opacity-50">
           <span className="font-mono text-xs tracking-widest text-white/50">GAMBLY</span>
         </div>
@@ -34,14 +40,14 @@ export function Card({ card, className = '' }: CardProps) {
   }
 
   // Frente da carta
-  const colorClass = SUIT_COLORS[card.suit]
-  const symbol = SUIT_SYMBOLS[card.suit]
+  const colorClass = SUIT_COLORS[suit]
+  const symbol = SUIT_SYMBOLS[suit]
 
   return (
-    <div className={`${baseStyles} bg-white ${className}`}>
+    <div className={`${baseStyles} bg-white ${className}`} {...props}>
       <div className="flex flex-col items-center leading-none pointer-events-none">
         <span className={`text-6xl font-black font-mono ${colorClass}`}>
-          {card.rank}
+          {rank}
         </span>
         <span className={`text-5xl mt-2 ${colorClass}`}>
           {symbol}
