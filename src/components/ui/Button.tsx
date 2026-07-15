@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'success'
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info'
   label: string
   shortcut?: string // Atalho visual ex: "H" Hit
 }
@@ -13,7 +13,9 @@ export function Button({ variant = 'secondary', label, shortcut, className = '',
     primary: 'bg-arcade-action text-black font-bold shadow-neon hover:scale-105',
     secondary: 'text-white border border-white/10 bg-arcade-surface/50 hover:bg-white/10 backdrop-blur-md',
     danger: 'text-red-400 border border-white/10 bg-arcade-surface/50 hover:bg-red-400/10 backdrop-blur-md',
-    success: 'text-green-400 border border-white/10 bg-arcade-surface/50 hover:bg-green-400/10 backdrop-blur-md'
+    success: 'text-green-400 border border-white/10 bg-arcade-surface/50 hover:bg-green-400/10 backdrop-blur-md',
+    warning: 'text-yellow-400 border border-white/10 bg-arcade-surface/50 hover:bg-yellow-400/10 backdrop-blur-md',
+    info: 'text-blue-400 border border-white/10 bg-arcade-surface/50 hover:bg-blue-400/10 backdrop-blur-md'
   }
 
   return (

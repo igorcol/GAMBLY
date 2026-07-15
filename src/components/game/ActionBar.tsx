@@ -1,24 +1,32 @@
 'use client'
 
 import { useTableStore } from '@/store/tableStore'
+import { useBankrollStore } from '@/store/bankrollStore'
 import { Button } from '@/components/ui/Button'
 import { Chip } from '@/components/ui/Chip'
 import { useGameShortcuts } from '@/hooks/useGameShortcuts'
-import { BetStack } from '@/components/game/BetStack' // NOVO IMPORT
+import { BetStack } from '@/components/game/BetStack'
 
 const AVAILABLE_CHIPS = [10, 50, 100, 500, 1000]
 
 export function ActionBar() {
   const { state, pendingBet, pendingChips, startGame, placeBet, dispatchAction, addPendingBet, clearPendingBet } = useTableStore()
+  const { balance } = useBankrollStore()
   
   useGameShortcuts()
+
+  // Lógica de condições para as novas regras
+  const currentHand = state.playerHands[state.activeHandIndex]
+  const canDouble = currentHand?.cards.length === 2 && balance >= currentHand.bet
+  const canSplit = currentHand?.cards.length === 2 && 
+                   currentHand.cards[0].rank === currentHand.cards[1].rank && 
+                   balance >= currentHand.bet
 
   return (
     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-full max-w-2xl px-4 z-50">
       
       {state.phase === 'BETTING' && (
         <div className="flex flex-col items-center gap-6 bg-arcade-surface/50 p-6 rounded-3xl border border-white/10 backdrop-blur-md w-full">
-          
           <div className="flex items-center w-full justify-between px-4">
             <button 
               onClick={clearPendingBet}
@@ -29,11 +37,9 @@ export function ActionBar() {
             </button>
             
             <div className="flex flex-col items-center min-h-30 justify-end">
-              {/* O componente inteligente assume a renderização aqui */}
               <div className="mb-4">
                 <BetStack chips={pendingChips} phase={state.phase} />
               </div>
-
               <div className="flex flex-col items-center">
                 <span className="text-xs text-gray-500 font-mono tracking-widest uppercase mb-1">Total Bet</span>
                 <span className="text-2xl font-mono font-black text-arcade-action">${pendingBet}</span>
@@ -62,6 +68,12 @@ export function ActionBar() {
           {state.phase === 'PLAYER_TURN' && (
             <>
               <Button variant="danger" label="Stand" shortcut="S" onClick={() => dispatchAction({ type: 'STAND' })} />
+              {canSplit && (
+                <Button variant="secondary" label="Split" onClick={() => dispatchAction({ type: 'SPLIT' })} />
+              )}
+              {canDouble && (
+                <Button variant="warning" label="Double" onClick={() => dispatchAction({ type: 'DOUBLE' })} />
+              )}
               <Button variant="success" label="Hit" shortcut="H" onClick={() => dispatchAction({ type: 'HIT' })} />
             </>
           )}

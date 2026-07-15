@@ -16,7 +16,6 @@ export interface GameAction {
 
 export type GamePhase = 'IDLE' | 'BETTING' | 'DEALING' | 'PLAYER_TURN' | 'DEALER_TURN' | 'PAYOUT';
 
-// Resultados possíveis para uma mão
 export type HandResult = 'WIN' | 'LOSS' | 'PUSH' | 'BUST' | 'BLACKJACK' | 'NONE';
 
 export interface Hand {
@@ -24,14 +23,17 @@ export interface Hand {
   isBusted: boolean;
   isStanding: boolean;
   score: number;
-  result: HandResult;     
-  bet: number;            // Valor apostado na mão atual
-  payout: number;         // Valor retornado na mão atual 
+  result: HandResult;       
+  bet: number;              
+  payout: number;
+  // --- REGRAS AVANÇADAS ---
+  isDoubled: boolean;       // Se a mão foi dobrada
+  isSplitted: boolean;      // Se a mão veio de um split
 }
 
 export interface GameState {
   phase: GamePhase;
-  playerHands: Hand[];
-  activeHandIndex: number;
+  playerHands: Hand[];      
+  activeHandIndex: number;  // Qual mão estamos jogando no momento
   dealerHand: Hand;
 }

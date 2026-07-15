@@ -1,4 +1,4 @@
-import { GameState, Card, Suit, Rank } from './types'
+import { GameState, Card, Suit, Rank, Hand } from './types'
 
 export class BlackjackEngine {
   private deck: Card[] = []
@@ -14,9 +14,15 @@ export class BlackjackEngine {
   private getInitialState(): GameState {
     return {
       phase: 'IDLE',
-      playerHands: [{ cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', bet: 0, payout: 0 }],
+      playerHands: [{ 
+        cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', 
+        bet: 0, payout: 0, isDoubled: false, isSplitted: false 
+      }],
       activeHandIndex: 0,
-      dealerHand: { cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', bet: 0, payout: 0 }
+      dealerHand: { 
+        cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', 
+        bet: 0, payout: 0, isDoubled: false, isSplitted: false 
+      }
     }
   }
 
@@ -76,8 +82,6 @@ export class BlackjackEngine {
     this.emitState()
   }
 
-  // --- MÉTODOS GRANULARES DE ORQUESTRAÇÃO ---
-
   public startDealing(bet: number) {
     this.state.phase = 'DEALING'
     this.state.playerHands[0].bet = bet
@@ -85,7 +89,7 @@ export class BlackjackEngine {
   }
 
   public dealToPlayer() {
-    this.state.playerHands[0].cards.push(this.drawCard()!)
+    this.state.playerHands[this.state.activeHandIndex].cards.push(this.drawCard()!)
     this.updateScores()
     this.emitState()
   }
@@ -111,18 +115,72 @@ export class BlackjackEngine {
     this.emitState()
   }
 
+  // --- REGRAS AVANÇADAS ---
+
+  public performDouble() {
+    const hand = this.state.playerHands[this.state.activeHandIndex]
+    if (hand.cards.length !== 2) return
+
+    hand.bet *= 2
+    hand.isDoubled = true
+    this.dealToPlayer()
+    this.playerStand()
+  }
+
+  public performSplit() {
+    const hand = this.state.playerHands[this.state.activeHandIndex]
+    if (hand.cards.length !== 2 || hand.cards[0].rank !== hand.cards[1].rank) return
+
+    const newHand: Hand = {
+      cards: [hand.cards.pop()!],
+      bet: hand.bet,
+      isBusted: false,
+      isStanding: false,
+      score: 0,
+      result: 'NONE',
+      payout: 0,
+      isDoubled: false,
+      isSplitted: true
+    }
+
+    hand.isSplitted = true
+    this.state.playerHands.splice(this.state.activeHandIndex + 1, 0, newHand)
+
+    this.dealToPlayer()
+    const originalIndex = this.state.activeHandIndex
+    this.state.activeHandIndex += 1
+    this.dealToPlayer()
+    this.state.activeHandIndex = originalIndex
+
+    this.updateScores()
+    this.emitState()
+  }
+
   public playerHit() {
     this.dealToPlayer()
-    const hand = this.state.playerHands[0]
+    const hand = this.state.playerHands[this.state.activeHandIndex]
     if (hand.isBusted) {
-      this.state.phase = 'PAYOUT'
-      this.evaluateResults()
+      hand.isStanding = true
+      this.handleTurnSwitch()
     }
   }
 
   public playerStand() {
-    this.state.playerHands[0].isStanding = true
-    this.state.phase = 'DEALER_TURN'
+    this.state.playerHands[this.state.activeHandIndex].isStanding = true
+    this.handleTurnSwitch()
+  }
+
+  private handleTurnSwitch() {
+    if (this.state.activeHandIndex < this.state.playerHands.length - 1) {
+      this.state.activeHandIndex += 1
+    } else {
+      this.state.phase = 'DEALER_TURN'
+      this.revealDealerCard()
+      while (this.state.dealerHand.score < 17) {
+        this.dealToDealer(false)
+      }
+      this.evaluateResults()
+    }
     this.emitState()
   }
 
@@ -139,7 +197,6 @@ export class BlackjackEngine {
 
     for (const hand of this.state.playerHands) {
       if (hand.result === 'BLACKJACK') continue
-
       if (hand.isBusted) { hand.result = 'BUST'; hand.payout = 0 }
       else if (dealerBusted) { hand.result = 'WIN'; hand.payout = hand.bet * 2 }
       else if (hand.score > dealerScore) { hand.result = 'WIN'; hand.payout = hand.bet * 2 }

@@ -12,7 +12,7 @@ interface TableStore {
   state: GameState
   isInitialized: boolean
   pendingBet: number
-  pendingChips: PendingChip[] // NOVO: Guarda a pilha visual de fichas
+  pendingChips: PendingChip[]
   initializeTable: () => void
   startGame: () => void
   addPendingBet: (amount: number) => void
@@ -22,15 +22,20 @@ interface TableStore {
 }
 
 let engineInstance: BlackjackEngine | null = null
-
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const useTableStore = create<TableStore>((set, get) => ({
   state: {
     phase: 'IDLE',
-    playerHands: [{ cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', bet: 0, payout: 0 }],
+    playerHands: [{ 
+      cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', 
+      bet: 0, payout: 0, isDoubled: false, isSplitted: false 
+    }],
     activeHandIndex: 0,
-    dealerHand: { cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', bet: 0, payout: 0 }
+    dealerHand: { 
+      cards: [], isBusted: false, isStanding: false, score: 0, result: 'NONE', 
+      bet: 0, payout: 0, isDoubled: false, isSplitted: false 
+    }
   },
   isInitialized: false,
   pendingBet: 0,
@@ -52,7 +57,7 @@ export const useTableStore = create<TableStore>((set, get) => ({
 
   startGame: () => {
     if (engineInstance) {
-      set({ pendingBet: 0, pendingChips: [] }) // Limpa a mesa ao reiniciar
+      set({ pendingBet: 0, pendingChips: [] })
       engineInstance.startGame()
     }
   },
@@ -62,7 +67,6 @@ export const useTableStore = create<TableStore>((set, get) => ({
     const { pendingBet, pendingChips } = get()
     
     if (pendingBet + amount <= balance) {
-      // Cria um ID único para o Framer Motion conseguir rastrear a animação individual de cada ficha
       const newChip = { id: `${Date.now()}-${Math.random()}`, amount }
       set({ 
         pendingBet: pendingBet + amount,
@@ -79,9 +83,7 @@ export const useTableStore = create<TableStore>((set, get) => ({
     if (pendingBet <= 0) return
     
     const { deduct } = useBankrollStore.getState()
-    const isApproved = deduct(pendingBet)
-    
-    if (isApproved) {
+    if (deduct(pendingBet)) {
       engineInstance.startDealing(pendingBet)
       await delay(300)
       engineInstance.dealToPlayer()
@@ -98,20 +100,32 @@ export const useTableStore = create<TableStore>((set, get) => ({
 
   dispatchAction: async (action: GameAction) => {
     if (!engineInstance) return
+    const { deduct } = useBankrollStore.getState()
 
-    if (action.type === 'HIT') {
-      engineInstance.playerHit()
-    } 
-    else if (action.type === 'STAND') {
-      engineInstance.playerStand()
-      await delay(800)
-      engineInstance.revealDealerCard()
-      while (engineInstance.getState().dealerHand.score < 17) {
-        await delay(1000)
-        engineInstance.dealToDealer(false)
+    switch (action.type) {
+      case 'HIT':
+        engineInstance.playerHit()
+        break
+
+      case 'STAND':
+        engineInstance.playerStand()
+        break
+
+      case 'DOUBLE': {
+        const currentHand = engineInstance.getState().playerHands[engineInstance.getState().activeHandIndex]
+        if (deduct(currentHand.bet)) {
+          engineInstance.performDouble()
+        }
+        break
       }
-      await delay(800)
-      engineInstance.evaluateResults()
+
+      case 'SPLIT': {
+        const currentHand = engineInstance.getState().playerHands[engineInstance.getState().activeHandIndex]
+        if (deduct(currentHand.bet)) {
+          engineInstance.performSplit()
+        }
+        break
+      }
     }
   }
 }))
