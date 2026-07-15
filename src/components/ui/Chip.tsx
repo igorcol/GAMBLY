@@ -1,5 +1,6 @@
 'use client'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ButtonHTMLAttributes } from 'react'
 import { motion, HTMLMotionProps } from 'framer-motion'
 
