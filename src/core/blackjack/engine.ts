@@ -213,15 +213,12 @@ export class BlackjackEngine {
   private handleTurnSwitch() {
     if (this.state.activeHandIndex < this.state.playerHands.length - 1) {
       this.state.activeHandIndex += 1;
+      this.emitState(); // Apenas emite a mudança de mão
     } else {
       this.state.phase = "DEALER_TURN";
-      this.revealDealerCard();
-      while (this.state.dealerHand.score < 17) {
-        this.dealToDealer(false);
-      }
-      this.evaluateResults();
+      this.revealDealerCard(); // Revela a carta escondida
+      this.emitState(); // Avisa que o Dealer vai começar
     }
-    this.emitState();
   }
 
   public revealDealerCard() {
@@ -269,7 +266,7 @@ export class BlackjackEngine {
         isStanding: false,
         score: 0,
         result: "NONE",
-        bet: this.state.playerHands[0].bet || 100, 
+        bet: this.state.playerHands[0].bet || 100,
         payout: 0,
         isDoubled: false,
         isSplitted: false,

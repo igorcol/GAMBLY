@@ -19,6 +19,7 @@ interface TableStore {
   clearPendingBet: () => void
   placeBet: () => Promise<void>
   dispatchAction: (action: GameAction) => Promise<void>
+  processDealerTurn: () => Promise<void> // Novo método para controlar o tempo
 }
 
 let engineInstance: BlackjackEngine | null = null
@@ -53,10 +54,8 @@ export const useTableStore = create<TableStore>((set, get) => ({
       set({ state: newState })
     });
 
-    // * EXPÕES SCRIPT DE DEBUG 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).blackjackEngine = engineInstance;
-
     set({ isInitialized: true })
   },
 
@@ -114,12 +113,20 @@ export const useTableStore = create<TableStore>((set, get) => ({
 
       case 'STAND':
         engineInstance.playerStand()
+        // Após o stand, verificamos se a engine entrou no turno do dealer
+        if (engineInstance.getState().phase === 'DEALER_TURN') {
+          await get().processDealerTurn()
+        }
         break
 
       case 'DOUBLE': {
         const currentHand = engineInstance.getState().playerHands[engineInstance.getState().activeHandIndex]
         if (deduct(currentHand.bet)) {
           engineInstance.performDouble()
+          // Se após o double a fase virar Dealer, processamos o dealer
+          if (engineInstance.getState().phase === 'DEALER_TURN') {
+            await get().processDealerTurn()
+          }
         }
         break
       }
@@ -132,5 +139,18 @@ export const useTableStore = create<TableStore>((set, get) => ({
         break
       }
     }
+  },
+
+  processDealerTurn: async () => {
+    if (!engineInstance) return
+    
+    // Loop assíncrono que respeita o tempo da animação
+    while (engineInstance.getState().dealerHand.score < 17) {
+      await delay(1000) 
+      engineInstance.dealToDealer(false)
+    }
+    
+    await delay(800)
+    engineInstance.evaluateResults()
   }
 }))
