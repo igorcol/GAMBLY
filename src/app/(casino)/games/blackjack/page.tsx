@@ -42,7 +42,8 @@ const DopaminePopup = ({ phase, payout }: { phase: string, payout: number }) => 
 };
 
 export default function BlackjackTable() {
-  const { isInitialized, initializeTable, state, pendingChips } = useTableStore()
+  // 1. Puxamos o startGame do Store
+  const { isInitialized, initializeTable, state, pendingChips, startGame } = useTableStore()
   const balance = useBankrollStore((state) => state.balance)
 
   const playerResult = state.playerHands[0]?.result || 'NONE'
@@ -106,19 +107,43 @@ export default function BlackjackTable() {
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-8 w-full">
-          {state.playerHands.map((hand, index) => (
-            <div key={index} className="relative flex flex-col items-center">
-              <Hand hand={hand} label={state.playerHands.length > 1 ? `Hand ${index + 1}` : "Player"} />
+        {/* SPOTS da Mesa */}
+        {state.phase === 'IDLE' ? (
+          <div className="flex items-center justify-center gap-4 sm:gap-10 w-full mt-16 min-h-40">
+            {[
+              { id: 1, transform: '-translate-y-12 -rotate-[22deg]' },
+              { id: 2, transform: '-translate-y-2 -rotate-[11deg]' },
+              { id: 3, transform: 'translate-y-4 rotate-0' }, 
+              { id: 4, transform: '-translate-y-2 rotate-[11deg]' },
+              { id: 5, transform: '-translate-y-12 rotate-[22deg]' }
+            ].map((spot) => (
+              <button
+                key={spot.id}
+                onClick={() => startGame()}
+                className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full border-[3px] border-dashed border-white/40 bg-black/30 hover:border-yellow-400 hover:bg-yellow-400/10 hover:scale-105 transition-all duration-300 flex items-center justify-center group cursor-pointer ${spot.transform}`}
+                title={`Sente-se no Spot ${spot.id}`}
+              >
+                <span className="text-white/60 group-hover:text-yellow-400 font-bold tracking-widest text-lg transition-colors">
+                  SIT
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-8 w-full">
+            {state.playerHands.map((hand, index) => (
+              <div key={index} className="relative flex flex-col items-center">
+                <Hand hand={hand} label={state.playerHands.length > 1 ? `Hand ${index + 1}` : "Player"} />
 
-              {state.phase !== 'BETTING' && state.phase !== 'IDLE' && (
-                <div className="absolute -bottom-14 flex justify-center z-50">
-                  <BetStack chips={pendingChips} phase={state.phase} result={hand.result} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                {state.phase !== 'BETTING' && state.phase !== 'IDLE' && (
+                  <div className="absolute -bottom-14 flex justify-center z-50">
+                    <BetStack chips={pendingChips} phase={state.phase} result={hand.result} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
       </div>
 

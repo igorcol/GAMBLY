@@ -22,6 +22,10 @@ export function ActionBar() {
                    currentHand.cards[0].rank === currentHand.cards[1].rank && 
                    balance >= currentHand.bet
 
+  // Se o jogo não começou, a ActionBar fica invisível 
+  // (O usuário deve clicar em um Spot na mesa para iniciar)
+  if (state.phase === 'IDLE') return null
+
   return (
     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 w-full max-w-2xl px-4 z-50">
       
@@ -61,8 +65,9 @@ export function ActionBar() {
 
       {state.phase !== 'BETTING' && (
         <div className="flex items-center gap-4 bg-arcade-surface/50 p-4 rounded-full border border-white/10 backdrop-blur-md transition-all">
-          {(state.phase === 'IDLE' || state.phase === 'PAYOUT') && (
-            <Button variant="primary" label={state.phase === 'PAYOUT' ? 'Play Again' : 'Start Game'} onClick={startGame} />
+          
+          {state.phase === 'PAYOUT' && (
+            <Button variant="primary" label="Play Again" onClick={startGame} />
           )}
 
           {state.phase === 'PLAYER_TURN' && (
