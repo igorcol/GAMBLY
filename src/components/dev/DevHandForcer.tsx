@@ -32,7 +32,7 @@ export function DevHandForcer() {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-zinc-400 text-xs font-semibold">2. HAND FORCER</h3>
+      <h3 className="text-zinc-400 text-xs font-semibold">2. HANDS</h3>
       
       {/* Input Customizado */}
       <div className="space-y-1">

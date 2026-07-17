@@ -30,7 +30,7 @@ export function DevMenu() {
       {isOpen && (
         <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-lg shadow-2xl mt-3 w-72">
           <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-            <h2 className="text-white font-bold text-sm tracking-widest">DEV PANEL</h2>
+            <h2 className="text-white font-bold text-sm tracking-widest">DEV MENU</h2>
             <button 
               onClick={() => setIsOpen(false)} 
               className="text-zinc-500 hover:text-white transition-colors"
