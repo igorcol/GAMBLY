@@ -4,18 +4,32 @@ import { useState } from 'react'
 import { DevBankroll } from './DevBankroll'
 import { DevHandForcer } from './DevHandForcer'
 import { DevStateXRay } from './DevStateXRay'
+import { useTableStore } from '../../store/tableStore'
 
 export function DevMenu() {
   const [isOpen, setIsOpen] = useState(false)
+  const { state } = useTableStore()
   const isDev = process.env.NODE_ENV === 'development'
 
   if (!isDev) return null
 
+  // Mapeamento de cores baseado na fase do jogo
+  const getPhaseColor = (phase: string) => {
+    switch (phase) {
+      case 'IDLE':
+      case 'BETTING': return 'bg-yellow-950/50 text-yellow-500 border-yellow-900/50'
+      case 'DEALING':
+      case 'PLAYER_TURN': return 'bg-blue-950/50 text-blue-400 border-blue-900/50'
+      case 'DEALER_TURN': return 'bg-purple-950/50 text-purple-400 border-purple-900/50'
+      case 'PAYOUT': return 'bg-emerald-950/50 text-emerald-400 border-emerald-900/50'
+      default: return 'bg-zinc-900 text-zinc-400 border-zinc-700'
+    }
+  }
+
   return (
-    // Mudamos de bottom-4 para top-24 e adicionamos flex-col items-end
     <div className="fixed top-24 right-4 z-50 font-mono flex flex-col items-end">
       
-      {/* Botão Flutuante (agora fica em cima) */}
+      {/* Botão Flutuante */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white p-3 rounded-full shadow-lg flex items-center justify-center transition-all"
@@ -27,11 +41,18 @@ export function DevMenu() {
         </svg>
       </button>
 
-      {/* Painel (agora abre para baixo, com mt-3) */}
+      {/* Painel */}
       {isOpen && (
         <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-lg shadow-2xl mt-3 w-72">
+          
+          {/* Header com Badge Dinâmico */}
           <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-            <h2 className="text-white font-bold text-sm tracking-widest">DEV MENU</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-white font-bold text-sm tracking-widest">DEV PANEL</h2>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded border font-bold tracking-wider ${getPhaseColor(state.phase)}`}>
+                {state.phase}
+              </span>
+            </div>
             <button 
               onClick={() => setIsOpen(false)} 
               className="text-zinc-500 hover:text-white transition-colors"
@@ -40,6 +61,7 @@ export function DevMenu() {
             </button>
           </div>
 
+          {/* Módulos */}
           <div className="space-y-4">
             <DevBankroll />
             <div className="border-b border-zinc-800/60" />
