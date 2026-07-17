@@ -13,6 +13,8 @@ interface TableStore {
   isInitialized: boolean
   pendingBet: number
   pendingChips: PendingChip[]
+  selectedChipAmount: number
+  setSelectedChip: (amount: number) => void
   initializeTable: () => void
   startGame: () => void
   addPendingBet: (amount: number) => void
@@ -43,6 +45,7 @@ export const useTableStore = create<TableStore>((set, get) => ({
   isInitialized: false,
   pendingBet: 0,
   pendingChips: [],
+  selectedChipAmount: 10,
 
   initializeTable: () => {
     if (engineInstance) return
@@ -68,10 +71,13 @@ export const useTableStore = create<TableStore>((set, get) => ({
     }
   },
 
+  setSelectedChip: (amount: number) => set({ selectedChipAmount: amount }),
+
   addPendingBet: (amount: number) => {
     const { balance } = useBankrollStore.getState()
     const { pendingBet, pendingChips } = get()
     
+    // NOTA: No futuro, mudar isso aqui para usar o amount que vem do clique no Spot, usando o selectedChipAmount
     if (pendingBet + amount <= balance) {
       const newChip = { id: `${Date.now()}-${Math.random()}`, amount }
       set({ 
