@@ -44,20 +44,22 @@ Por que: Por último, resolvemos a questão do banner "DEALER WINS" global. Vamo
 # DEV PANEL
 
 ## 1. Controle de Bankroll (Stress Test)
-[] Set manual: +10, +100, +500, +1000
+[X] Set manual: +10, +100, +500, +1000
 
-[] Falência ($0): Para testar se os bloqueios de UI estão funcionando (impedir o Double ou o Deal sem saldo).
+[X] Falência ($0): Para testar se os bloqueios de UI estão funcionando (impedir o Double ou o Deal sem saldo).
 
-[] Reset de Luxo ($10.000): Para recuperar o fôlego e continuar os testes após perder tudo.
+[X] Reset ($1.000): Para continuar os testes após perder tudo.
 
 ## 2. Manipulação de Mãos (Hand Forcer)
-Blackjack Automático: Injeta [A, K] instantaneamente.
+[] Input Customizado: Um campo de texto rápido onde você digita A, 7 e o botão aplica à sua mão.
 
-Cenário de Split: Injeta um par (ex: [8, 8]) para você testar rapidamente a renderização dos múltiplos montes e das stacks de fichas individuais.
+[] Cenário de Split: Injeta um par (ex: [8, 8]) para você testar rapidamente a renderização dos múltiplos montes e das stacks de fichas individuais.
 
-Dealer Blackjack: Força o dealer a ter um Blackjack para testar como as mãos do jogador reagem (útil para quando formos implementar a mecânica de Insurance).
+[] Blackjack Automático: Injeta [A, K] instantaneamente.
 
-Input Customizado: Um campo de texto rápido onde você digita A, 7 e o botão aplica à sua mão.
+
+[] Dealer Blackjack: Força o dealer a ter um Blackjack para testar como as mãos do jogador reagem (útil para quando formos implementar a mecânica de Insurance).
+
 
 
 ## 3. Manipulação de Tempo e Fase

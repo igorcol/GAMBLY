@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { BlackjackEngine } from '../core/blackjack/engine'
-import { GameState, GameAction } from '../core/blackjack/types'
+import { GameState, GameAction, Rank } from '../core/blackjack/types'
 import { useBankrollStore } from './bankrollStore'
 
 interface PendingChip {
@@ -19,7 +19,9 @@ interface TableStore {
   clearPendingBet: () => void
   placeBet: () => Promise<void>
   dispatchAction: (action: GameAction) => Promise<void>
-  processDealerTurn: () => Promise<void> // Novo método para controlar o tempo
+  processDealerTurn: () => Promise<void>                // Método para controlar o tempo
+  devForcePlayerHand: (ranks: Rank[]) => void           // Método DEV
+  devForceDealerHand: (ranks: Rank[]) => void           // Método DEV
 }
 
 let engineInstance: BlackjackEngine | null = null
@@ -152,5 +154,14 @@ export const useTableStore = create<TableStore>((set, get) => ({
     
     await delay(800)
     engineInstance.evaluateResults()
+  },
+
+  //* --- DEV / DEBUG FUNCTIONS ---
+  devForcePlayerHand: (ranks: Rank[]) => {
+    if (engineInstance) engineInstance.forceHand(ranks)
+  },
+
+  devForceDealerHand: (ranks: Rank[]) => {
+    if (engineInstance) engineInstance.forceDealerHand(ranks)
   }
 }))

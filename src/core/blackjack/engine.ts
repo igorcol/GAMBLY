@@ -256,7 +256,7 @@ export class BlackjackEngine {
 
   // * ----------- DEV / DEBUG FUNCTIONS -----------
 
-  // Forçar uma mão para debug
+  // Forçar uma mão para PLAYER - DEV
   public forceHand(ranks: Rank[]) {
     // Limpa a mão do jogador
     this.state.playerHands = [
@@ -281,6 +281,37 @@ export class BlackjackEngine {
     }));
 
     // Atualiza os estados
+    this.updateScores();
+    this.emitState();
+  }
+
+  // Forçar uma mão para DEALER - DEV
+  public forceDealerHand(ranks: Rank[]) {
+    // Limpa mão atual do dealer
+    this.state.dealerHand = {
+      cards: [],
+      isBusted: false,
+      isStanding: false,
+      score: 0,
+      result: "NONE",
+      bet: 0,
+      payout: 0,
+      isDoubled: false,
+      isSplitted: false,
+    };
+
+    // Injeta cartas escolhidas
+    this.state.dealerHand.cards = ranks.map((rank, index) => {
+      // Carta escondida - Se o jogo estiver na mão do player, a segunda carta é isHidden = true
+      const shouldHide = index === 1 && this.state.phase !== "DEALER_TURN" && this.state.phase !== "PAYOUT";
+
+      return {
+        suit: "HEARTS",
+        rank,
+        isHidden: shouldHide
+      };
+    });
+
     this.updateScores();
     this.emitState();
   }
