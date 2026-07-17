@@ -9,6 +9,7 @@ import { BetStack } from '@/components/game/BetStack'
 import { motion } from 'framer-motion'
 import { DevMenu } from '@/components/dev/DevMenu'
 import { BlackjackTutorialModal } from '@/components/game/BlackjackTutorialModal'
+import { StrategyModal } from '@/components/game/StrategyModal'
 
 const DopaminePopup = ({ phase, payout }: { phase: string, payout: number }) => {
   const [visible, setVisible] = useState(false);
@@ -53,6 +54,7 @@ export default function BlackjackTable() {
   const balance = useBankrollStore((state) => state.balance)
 
   const [isHelpOpen, setIsHelpOpen] = useState(false); // Modal de ajuda
+  const [isStrategyOpen, setIsStrategyOpen] = useState(false) // Modal da tabela
 
   const playerResult = state.playerHands[0]?.result || 'NONE'
   const payout = state.playerHands[0]?.payout || 0
@@ -108,12 +110,23 @@ export default function BlackjackTable() {
 
           {/* Coluna esquerda: Ajuda + Dica */}
           <div className="flex items-center gap-3">
+
+            {/* Btn Ajuda */}
             <button
               onClick={() => setIsHelpOpen(true)}
               className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
             >
               ?
             </button>
+
+            {/* Botão tabela */}
+            <button
+              onClick={() => setIsStrategyOpen(true)}
+              className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-yellow-500/60 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
+            >
+              💡
+            </button>
+
           </div>
 
           {/* Coluna direita: Dev */}
@@ -189,6 +202,11 @@ export default function BlackjackTable() {
       <BlackjackTutorialModal
         isOpen={isHelpOpen}
         onClose={() => setIsHelpOpen(false)}
+      />
+
+      <StrategyModal
+        isOpen={isStrategyOpen}
+        onClose={() => setIsStrategyOpen(false)}
       />
     </main>
   )
