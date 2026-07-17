@@ -6,9 +6,18 @@ import { motion, HTMLMotionProps } from 'framer-motion'
 
 interface ChipProps extends Omit<HTMLMotionProps<"button">, "children"> {
   amount: number
+  index?: number 
 }
 
-const CHIP_COLORS: Record<number, string> = {
+const CHIP_THEMES = [
+  'bg-slate-700 ring-slate-500 text-white',    // Index 0
+  'bg-blue-800 ring-blue-500 text-white',      // Index 1
+  'bg-violet-700 ring-violet-400 text-white',  // Index 2
+  'bg-yellow-500 ring-yellow-300 text-black',  // Index 3
+  'bg-orange-500 ring-orange-300 text-black',  // Index 4
+];
+
+const CHIP_COLORS: Record<number, string> = { // Mantem CHIP_COLORS para não quebrar outros componentes
   10: 'bg-slate-700 ring-slate-500 text-white',
   50: 'bg-blue-800 ring-blue-500 text-white',
   100: 'bg-violet-700 ring-violet-400 text-white',
@@ -16,8 +25,10 @@ const CHIP_COLORS: Record<number, string> = {
   1000: 'bg-orange-500 ring-orange-300 text-black',
 }
 
-export function Chip({ amount, className = '', ...props }: ChipProps) {
-  const colorClass = CHIP_COLORS[amount] || 'bg-arcade-surface ring-white/20 text-white'
+export function Chip({ amount, index, className = '', ...props }: ChipProps) {
+  const colorClass = index !== undefined 
+    ? CHIP_THEMES[index % CHIP_THEMES.length] 
+    : (CHIP_COLORS[amount] || 'bg-arcade-surface ring-white/20 text-white');
 
   return (
     <motion.button
