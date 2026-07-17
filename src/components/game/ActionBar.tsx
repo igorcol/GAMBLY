@@ -103,8 +103,8 @@ export function ActionBar() {
               {pendingChips.length > 0 ? (
                 <BetStack chips={pendingChips} phase={state.phase} />
               ) : (
-                <span className="text-white/80 font-bold tracking-widest text-xl group-hover:text-yellow-400">
-                  BET
+                <span className="text-white/80 tracking-widest group-hover:text-yellow-400 justify-center text-center">
+                  PLACE BET
                 </span>
               )}
             </div>
