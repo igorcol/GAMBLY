@@ -51,14 +51,14 @@ Por que: Por último, resolvemos a questão do banner "DEALER WINS" global. Vamo
 [X] Reset ($1.000): Para continuar os testes após perder tudo.
 
 ## 2. Manipulação de Mãos (Hand Forcer)
-[] Input Customizado: Um campo de texto rápido onde você digita A, 7 e o botão aplica à sua mão.
+[X] Input Customizado: Um campo de texto rápido onde você digita A, 7 e o botão aplica à sua mão.
 
-[] Cenário de Split: Injeta um par (ex: [8, 8]) para você testar rapidamente a renderização dos múltiplos montes e das stacks de fichas individuais.
+[X] Cenário de Split: Injeta um par (ex: [8, 8]) para você testar rapidamente a renderização dos múltiplos montes e das stacks de fichas individuais.
 
-[] Blackjack Automático: Injeta [A, K] instantaneamente.
+[X] Blackjack Automático: Injeta [A, K] instantaneamente.
 
 
-[] Dealer Blackjack: Força o dealer a ter um Blackjack para testar como as mãos do jogador reagem (útil para quando formos implementar a mecânica de Insurance).
+[X] Dealer Blackjack: Força o dealer a ter um Blackjack para testar como as mãos do jogador reagem (útil para quando formos implementar a mecânica de Insurance).
 
 
 
