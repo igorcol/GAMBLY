@@ -150,14 +150,21 @@ export const useTableStore = create<TableStore>((set, get) => ({
   processDealerTurn: async () => {
     if (!engineInstance) return
     
-    // Loop assíncrono que respeita o tempo da animação
-    while (engineInstance.getState().dealerHand.score < 17) {
-      await delay(1000) 
-      engineInstance.dealToDealer(false)
+    // Verifica se todas as mãos de player estouraram
+    const allPlayersBusted = engineInstance.getState().playerHands.every(hand => hand.isBusted)
+
+    // Dealer só joga se houver alguma mão ativa
+    if (!allPlayersBusted) {
+      // Loop async respeitando tempo de animação
+      while (engineInstance.getState().dealerHand.score < 17) { // Da carta enquano mão do dealer é menor que 17
+        await delay(1000)
+        engineInstance.dealToDealer(false)
+      }
     }
-    
+
     await delay(800)
     engineInstance.evaluateResults()
+
   },
 
   //* --- DEV / DEBUG FUNCTIONS ---
