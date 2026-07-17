@@ -73,12 +73,15 @@ export function ActionBar() {
               {AVAILABLE_CHIPS.map((amount, i) => (
                 <div
                   key={amount}
-                  className={`...`}
                   onClick={() => setSelectedChip(amount)}
+                  className={`transition-all duration-300 cursor-pointer rounded-full ${selectedChipAmount === amount
+                      ? 'scale-110 ring-2 ring-yellow-400'
+                      : 'opacity-60 hover:opacity-100 hover:scale-105'
+                    }`}
                 >
                   <Chip
                     amount={amount}
-                    index={i} // Passao índice para garantir a cor consistente
+                    index={i}
                     layoutId={`chip-source-${amount}`}
                   />
                 </div>
