@@ -8,6 +8,7 @@ import { Hand } from '@/components/game/Hand'
 import { BetStack } from '@/components/game/BetStack'
 import { motion } from 'framer-motion'
 import { DevMenu } from '@/components/dev/DevMenu'
+import { BlackjackTutorialModal } from '@/components/game/BlackjackTutorialModal'
 
 const DopaminePopup = ({ phase, payout }: { phase: string, payout: number }) => {
   const [visible, setVisible] = useState(false);
@@ -51,6 +52,8 @@ export default function BlackjackTable() {
 
   const balance = useBankrollStore((state) => state.balance)
 
+  const [isHelpOpen, setIsHelpOpen] = useState(false); // Modal de ajuda
+
   const playerResult = state.playerHands[0]?.result || 'NONE'
   const payout = state.playerHands[0]?.payout || 0
 
@@ -81,21 +84,39 @@ export default function BlackjackTable() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-between p-10 relative overflow-hidden">
 
-      <DevMenu />
 
-      <div className="w-full flex items-center justify-between px-4">
-        <h1 className="text-3xl font-mono font-black text-white/50 tracking-tighter">GAMBLY</h1>
+      {/* Header */}
+      <div className="w-full flex justify-between px-4">
 
-        <div className="relative">
-          <div className="flex items-center gap-3 bg-arcade-surface/50 border border-white/10 px-6 py-2 rounded-full backdrop-blur-md">
-            <span className="text-gray-400 font-medium text-sm uppercase tracking-widest">Bank</span>
-            <span className="font-mono font-bold text-white text-xl">
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(balance)}
-            </span>
+        {/* Coluna da Esquerda: Logo e Ajuda */}
+        <div className="flex flex-col gap-5">
+          <h1 className="text-3xl font-mono font-black text-white/50 tracking-tighter">GAMBLY</h1>
+          <button
+            onClick={() => setIsHelpOpen(true)}
+            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
+          >
+            ?
+          </button>
+        </div>
+
+        {/* Coluna da Direita: Bankroll e DevMenu */}
+        <div className="flex flex-col items-end gap-5">
+          <div className="relative">
+            <div className="flex items-center gap-3 bg-arcade-surface/50 border border-white/10 px-6 py-2 rounded-full backdrop-blur-md">
+              <span className="text-gray-400 font-medium text-sm uppercase tracking-widest">Bank</span>
+              <span className="font-mono font-bold text-white text-xl">
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(balance)}
+              </span>
+            </div>
+            <DopaminePopup phase={state.phase} payout={payout} />
           </div>
-          <DopaminePopup phase={state.phase} payout={payout} />
+
+          <div className="mr-2"> {/* Margem para ajustar o alinhamento se precisar */}
+            <DevMenu />
+          </div>
         </div>
       </div>
+
 
       <div className="flex flex-col items-center justify-center w-full flex-1 mt-10 relative">
         <Hand hand={state.dealerHand} label="Dealer" />
@@ -156,6 +177,12 @@ export default function BlackjackTable() {
       <div className="h-32 w-full relative z-40">
         <ActionBar />
       </div>
+
+
+      <BlackjackTutorialModal
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+      />
     </main>
   )
 }

@@ -27,7 +27,7 @@ export function DevMenu() {
   }
 
   return (
-    <div className="fixed top-24 right-4 z-50 font-mono flex flex-col items-end">
+    <div className="z-50 font-mono flex flex-col items-end">
       
       {/* Botão Flutuante */}
       <button 
