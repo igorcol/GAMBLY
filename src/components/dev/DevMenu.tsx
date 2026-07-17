@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { DevBankroll } from './DevBankroll'
 import { DevHandForcer } from './DevHandForcer'
+import { DevStateXRay } from './DevStateXRay'
 
 export function DevMenu() {
   const [isOpen, setIsOpen] = useState(false)
@@ -43,6 +44,8 @@ export function DevMenu() {
             <DevBankroll />
             <div className="border-b border-zinc-800/60" />
             <DevHandForcer />
+            <div className="border-b border-zinc-800/60" />
+            <DevStateXRay />
           </div>
         </div>
       )}

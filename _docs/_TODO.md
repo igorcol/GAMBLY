@@ -60,13 +60,12 @@ Por que: Por último, resolvemos a questão do banner "DEALER WINS" global. Vamo
 
 [X] Dealer Blackjack: Força o dealer a ter um Blackjack para testar como as mãos do jogador reagem (útil para quando formos implementar a mecânica de Insurance).
 
+## 3. Raio-X do Estado (State Inspector)
+Uma área em formato de código (JSON) que mostra em tempo real as variáveis invisíveis que afetam a UI: activeHandIndex, o tamanho atual do playerHands, e o score atual do Dealer. Isso mata a dúvida se o erro é visual (Tailwind/React) ou estrutural (Engine)
 
-
-## 3. Manipulação de Tempo e Fase
+## 4. Manipulação de Tempo e Fase
 Skip Animations / Fast Forward: Como agora temos delays reais no tableStore para puxar as cartas, seria útil um toggle para "Zerar Delays", permitindo que o jogo rode instantaneamente durante os testes de estresse.
 
 Forçar Payout: Muda o estado direto para PAYOUT para você testar os ajustes finos no DopaminePopup e nas cores do banner de vitória/derrota.
 
 
-## 4. Raio-X do Estado (State Inspector)
-Uma área em formato de código (JSON) que mostra em tempo real as variáveis invisíveis que afetam a UI: activeHandIndex, o tamanho atual do playerHands, e o score atual do Dealer. Isso mata a dúvida se o erro é visual (Tailwind/React) ou estrutural (Engine).
