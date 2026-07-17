@@ -10,10 +10,8 @@ export function DevMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const { state } = useTableStore()
   const isDev = process.env.NODE_ENV === 'development'
-
   if (!isDev) return null
 
-  // Mapeamento de cores baseado na fase do jogo
   const getPhaseColor = (phase: string) => {
     switch (phase) {
       case 'IDLE':
@@ -27,10 +25,11 @@ export function DevMenu() {
   }
 
   return (
-    <div className="z-50 font-mono flex flex-col items-end">
-      
+    // relative = ancora o painel absolute em relação a este container
+    <div className="relative z-50 font-mono">
+
       {/* Botão Flutuante */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white p-3 rounded-full shadow-lg flex items-center justify-center transition-all"
         title="Open Dev Panel"
@@ -41,11 +40,10 @@ export function DevMenu() {
         </svg>
       </button>
 
-      {/* Painel */}
+      {/* Painel: agora absolute, sai do fluxo, flutua sobre o resto */}
       {isOpen && (
-        <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-lg shadow-2xl mt-3 w-72">
-          
-          {/* Header com Badge Dinâmico */}
+        <div className="absolute top-full right-0 mt-3 bg-zinc-950 border border-zinc-800 p-4 rounded-lg shadow-2xl w-72">
+
           <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
             <div className="flex items-center gap-2">
               <h2 className="text-white font-bold text-sm tracking-widest">DEV PANEL</h2>
@@ -53,15 +51,14 @@ export function DevMenu() {
                 {state.phase}
               </span>
             </div>
-            <button 
-              onClick={() => setIsOpen(false)} 
+            <button
+              onClick={() => setIsOpen(false)}
               className="text-zinc-500 hover:text-white transition-colors"
             >
               ✕
             </button>
           </div>
 
-          {/* Módulos */}
           <div className="space-y-4">
             <DevBankroll />
             <div className="border-b border-zinc-800/60" />
@@ -71,7 +68,6 @@ export function DevMenu() {
           </div>
         </div>
       )}
-      
     </div>
   )
 }
