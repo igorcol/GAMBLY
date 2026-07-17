@@ -41,17 +41,14 @@ const DopaminePopup = ({ phase, payout }: { phase: string, payout: number }) => 
 };
 
 export default function BlackjackTable() {
-  const { 
-    isInitialized, 
-    initializeTable, 
-    state, 
-    pendingChips, 
-    pendingBet,
-    startGame, 
-    addPendingBet,
-    selectedChipAmount 
+  const {
+    isInitialized,
+    initializeTable,
+    state,
+    pendingChips,
+    startGame,
   } = useTableStore()
-  
+
   const balance = useBankrollStore((state) => state.balance)
 
   const playerResult = state.playerHands[0]?.result || 'NONE'
@@ -131,7 +128,7 @@ export default function BlackjackTable() {
         </div>
 
         {/* Camada de Interação: 5 Spots no IDLE, 1 Spot no BETTING */}
-        {/* IDLE: 5 Spots em Arco */}
+        {/* IDLE: Apenas os 5 spots para sentar */}
         {state.phase === 'IDLE' && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="flex items-center justify-center gap-4 sm:gap-10 w-full mt-16 pointer-events-auto">
@@ -154,20 +151,6 @@ export default function BlackjackTable() {
           </div>
         )}
 
-        {/* BETTING: Spot Único mais abaixo e Barra de Fichas acima */}
-        {state.phase === 'BETTING' && (
-          <div className="absolute bottom-10 flex flex-col items-center justify-center w-full z-20 gap-8">
-            {/* Spot Único de Aposta (Abaixo) */}
-            <button
-              onClick={() => addPendingBet(selectedChipAmount)}
-              className="w-32 h-32 rounded-full border-[3px] border-dashed border-white/40 bg-black/30 hover:border-yellow-400 hover:bg-yellow-400/10 transition-all flex items-center justify-center cursor-pointer"
-            >
-              <span className="text-white/80 font-bold tracking-widest text-xl">
-                {pendingBet > 0 ? `$${pendingBet}` : 'BET'}
-              </span>
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="h-32 w-full relative z-40">
