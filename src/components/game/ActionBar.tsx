@@ -25,8 +25,13 @@ export function ActionBar() {
   // ActionBar oculto em IDLE
   if (state.phase === 'IDLE') return null
 
+  // Define o posicionamento baseada na fase
+const positionClass = state.phase === 'BETTING' 
+  ? "fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2" 
+  : "fixed bottom-10 left-1/2 -translate-x-1/2";
+
   return (
-    <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-6 w-full max-w-2xl px-4 z-50">
+    <div className={`${positionClass} flex flex-col items-center gap-6 w-full max-w-2xl px-4 z-50 transition-all duration-500`}>
 
       {/* Visual de Casino Live para Betting */}
       {state.phase === 'BETTING' && (
