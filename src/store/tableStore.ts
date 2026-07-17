@@ -111,11 +111,15 @@ export const useTableStore = create<TableStore>((set, get) => ({
     switch (action.type) {
       case 'HIT':
         engineInstance.playerHit()
+        // Após o hit verifica se a engine entrou no turno do dealer
+        if (engineInstance.getState().phase === 'DEALER_TURN') {
+          await get().processDealerTurn()
+        }
         break
 
       case 'STAND':
         engineInstance.playerStand()
-        // Após o stand, verificamos se a engine entrou no turno do dealer
+        // Após o stand verifica se a engine entrou no turno do dealer
         if (engineInstance.getState().phase === 'DEALER_TURN') {
           await get().processDealerTurn()
         }
@@ -125,7 +129,7 @@ export const useTableStore = create<TableStore>((set, get) => ({
         const currentHand = engineInstance.getState().playerHands[engineInstance.getState().activeHandIndex]
         if (deduct(currentHand.bet)) {
           engineInstance.performDouble()
-          // Se após o double a fase virar Dealer, processamos o dealer
+          // Se após o double a fase virar Dealer, processa o dealer
           if (engineInstance.getState().phase === 'DEALER_TURN') {
             await get().processDealerTurn()
           }
