@@ -86,21 +86,12 @@ export default function BlackjackTable() {
 
 
       {/* Header */}
-      <div className="w-full flex justify-between px-4">
+      <div className="w-full flex flex-col gap-4 px-4">
 
-        {/* Coluna da Esquerda: Logo e Ajuda */}
-        <div className="flex flex-col gap-5">
+        {/* Linha 1: Título ---------------- Bankroll */}
+        <div className="w-full flex justify-between items-center">
           <h1 className="text-3xl font-mono font-black text-white/50 tracking-tighter">GAMBLY</h1>
-          <button
-            onClick={() => setIsHelpOpen(true)}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
-          >
-            ?
-          </button>
-        </div>
 
-        {/* Coluna da Direita: Bankroll e DevMenu */}
-        <div className="flex flex-col items-end gap-5">
           <div className="relative">
             <div className="flex items-center gap-3 bg-arcade-surface/50 border border-white/10 px-6 py-2 rounded-full backdrop-blur-md">
               <span className="text-gray-400 font-medium text-sm uppercase tracking-widest">Bank</span>
@@ -110,11 +101,27 @@ export default function BlackjackTable() {
             </div>
             <DopaminePopup phase={state.phase} payout={payout} />
           </div>
+        </div>
 
-          <div className="mr-2"> {/* Margem para ajustar o alinhamento se precisar */}
+        {/* Linha 2: Ajuda + Dica ---------------- Dev */}
+        <div className="w-full flex justify-between items-center">
+
+          {/* Coluna esquerda: Ajuda + Dica */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
+            >
+              ?
+            </button>
+          </div>
+
+          {/* Coluna direita: Dev */}
+          <div>
             <DevMenu />
           </div>
         </div>
+
       </div>
 
 
