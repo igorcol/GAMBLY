@@ -5,11 +5,12 @@ import { useBankrollStore } from '@/store/bankrollStore'
 import { Button } from '@/components/ui/Button'
 import { Chip } from '@/components/ui/Chip'
 import { useGameShortcuts } from '@/hooks/useGameShortcuts'
+import { BetStack } from './BetStack'
 
 const AVAILABLE_CHIPS = [10, 50, 100, 500, 1000]
 
 export function ActionBar() {
-  const { state, pendingBet, selectedChipAmount, setSelectedChip, startGame, placeBet, dispatchAction, clearPendingBet, addPendingBet } = useTableStore()
+  const { state, pendingBet, selectedChipAmount, setSelectedChip, startGame, placeBet, dispatchAction, clearPendingBet, addPendingBet, pendingChips } = useTableStore()
 
   const { balance } = useBankrollStore()
 
@@ -30,24 +31,24 @@ export function ActionBar() {
       {/* Visual de Casino Live para Betting */}
       {state.phase === 'BETTING' && (
         <div className="flex flex-col items-center gap-6 w-full">
-          
+
           {/* 1. Barra de Fichas (Centro da tela) */}
           <div className="flex items-center gap-4 bg-arcade-surface/50 p-4 rounded-full border border-white/10 backdrop-blur-md">
-            <button 
-              onClick={clearPendingBet} 
-              disabled={pendingBet === 0} 
+            <button
+              onClick={clearPendingBet}
+              disabled={pendingBet === 0}
               className="text-gray-400 hover:text-white font-mono text-xs uppercase px-4"
             >
               Clear
             </button>
             <div className="flex items-center gap-2">
               {AVAILABLE_CHIPS.map(amount => (
-                <div 
-                  key={amount} 
-                  className={`transition-all duration-300 cursor-pointer ${selectedChipAmount === amount ? 'scale-110 ring-2 ring-yellow-400 rounded-full' : 'opacity-60 hover:opacity-100'}`} 
+                <div
+                  key={amount}
+                  className={`transition-all duration-300 cursor-pointer ${selectedChipAmount === amount ? 'scale-110 ring-2 ring-yellow-400 rounded-full' : 'opacity-60 hover:opacity-100'}`}
                   onClick={() => setSelectedChip(amount)}
                 >
-                  <Chip amount={amount} />
+                  <Chip amount={amount} layoutId={`chip-source-${amount}`} />
                 </div>
               ))}
             </div>
@@ -56,15 +57,23 @@ export function ActionBar() {
             </div>
           </div>
 
-          {/* 2. Spot de Aposta (Abaixo das fichas) */}
-          <button
+          {/* 2. Spot de Aposta com BetStack Integrado */}
+          <div
             onClick={() => addPendingBet(selectedChipAmount)}
-            className="w-32 h-32 rounded-full border-[3px] border-dashed border-white/40 bg-black/30 hover:border-yellow-400 hover:bg-yellow-400/10 transition-all flex items-center justify-center cursor-pointer"
+            role="button"
+            tabIndex={0}
+            className="relative w-32 h-32 rounded-full border-[3px] border-dashed border-white/40 bg-black/30 hover:border-yellow-400 hover:bg-yellow-400/10 transition-all flex items-center justify-center cursor-pointer"
           >
-            <span className="text-white/80 font-bold tracking-widest text-xl">
-              {pendingBet > 0 ? `$${pendingBet}` : 'BET'}
-            </span>
-          </button>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {pendingChips.length > 0 ? (
+                <BetStack chips={pendingChips} phase={state.phase} />
+              ) : (
+                <span className="text-white/80 font-bold tracking-widest text-xl group-hover:text-yellow-400">
+                  BET
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
