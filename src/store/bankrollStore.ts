@@ -4,11 +4,11 @@ interface BankrollStore {
   balance: number
   deduct: (amount: number) => boolean // Retorna true se a transação foi aprovada (tem saldo)
   add: (amount: number) => void
+  setBalance: (amount: number) => void 
 }
 
 export const useBankrollStore = create<BankrollStore>((set, get) => ({
-  balance: 40, // Saldo inicial para a v0.1.0-alpha
-  // ! VER SE É O MELHOR LUGAR PARA SETAR 
+  balance: 100, // Saldo inicial para a v0.1.0-alpha
   
   deduct: (amount: number) => {
     const currentBalance = get().balance
@@ -22,5 +22,10 @@ export const useBankrollStore = create<BankrollStore>((set, get) => ({
   
   add: (amount: number) => {
     set((state) => ({ balance: state.balance + amount }))
+  },
+
+  // !!! ATENÇÃO PARA SEGURANÇA NA VERSÃO FINAL
+  setBalance: (amount: number) => {
+    set({ balance: amount })
   }
 }))

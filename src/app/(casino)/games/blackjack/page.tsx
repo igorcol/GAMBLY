@@ -7,6 +7,7 @@ import { ActionBar } from '@/components/game/ActionBar'
 import { Hand } from '@/components/game/Hand'
 import { BetStack } from '@/components/game/BetStack'
 import { motion } from 'framer-motion'
+import { DevMenu } from '@/components/dev/DevMenu'
 
 // Componente isolado para gerenciar o efeito de ganho
 const DopaminePopup = ({ phase, payout }: { phase: string, payout: number }) => {
@@ -73,6 +74,8 @@ export default function BlackjackTable() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-between p-10 relative overflow-hidden">
+
+      <DevMenu />
 
       <div className="w-full flex items-center justify-between px-4">
         <h1 className="text-3xl font-mono font-black text-white/50 tracking-tighter">GAMBLY</h1>
