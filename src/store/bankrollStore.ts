@@ -8,7 +8,7 @@ interface BankrollStore {
 }
 
 export const useBankrollStore = create<BankrollStore>((set, get) => ({
-  balance: 100, // Saldo inicial para a v0.1.0-alpha
+  balance: 1000, // Saldo inicial para a v0.1.0-alpha
   
   deduct: (amount: number) => {
     const currentBalance = get().balance
