@@ -109,24 +109,20 @@ export default function BlackjackTable() {
         <div className="w-full flex justify-between items-center">
 
           {/* Coluna esquerda: Ajuda + Dica */}
-          <div className="flex items-center gap-3">
-
-            {/* Btn Ajuda */}
+          <div className="flex items-center gap-6">
             <button
               onClick={() => setIsHelpOpen(true)}
-              className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
+              className="text-[10px] font-mono uppercase tracking-widest text-white/30 hover:text-white transition-colors duration-200"
             >
-              ?
+              [ Regras ]
             </button>
 
-            {/* Botão tabela */}
             <button
               onClick={() => setIsStrategyOpen(true)}
-              className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-yellow-500/60 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all flex items-center justify-center font-bold font-mono text-sm"
+              className="text-[10px] font-mono uppercase tracking-widest text-white/30 hover:text-yellow-500/80 transition-colors duration-200"
             >
-              💡
+              [ Estratégia ]
             </button>
-
           </div>
 
           {/* Coluna direita: Dev */}
