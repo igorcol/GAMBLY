@@ -37,3 +37,34 @@ Por que: Com o BetStack resolvido, agora sim vamos "limpar" o page.tsx. Vamos im
 Etiqueta 3: Feedback de Resultado Individual
 
 Por que: Por último, resolvemos a questão do banner "DEALER WINS" global. Vamos mover a lógica do banner para dentro do loop de mãos. Assim, se a mão 1 perder e a mão 2 ganhar, o usuário verá o feedback correto em cada uma, eliminando o erro de avaliação.
+
+===================
+
+
+# DEV PANEL
+
+## 1. Controle de Bankroll (Stress Test)
+[] Set manual: +10, +100, +500, +1000
+
+[] Falência ($0): Para testar se os bloqueios de UI estão funcionando (impedir o Double ou o Deal sem saldo).
+
+[] Reset de Luxo ($10.000): Para recuperar o fôlego e continuar os testes após perder tudo.
+
+## 2. Manipulação de Mãos (Hand Forcer)
+Blackjack Automático: Injeta [A, K] instantaneamente.
+
+Cenário de Split: Injeta um par (ex: [8, 8]) para você testar rapidamente a renderização dos múltiplos montes e das stacks de fichas individuais.
+
+Dealer Blackjack: Força o dealer a ter um Blackjack para testar como as mãos do jogador reagem (útil para quando formos implementar a mecânica de Insurance).
+
+Input Customizado: Um campo de texto rápido onde você digita A, 7 e o botão aplica à sua mão.
+
+
+## 3. Manipulação de Tempo e Fase
+Skip Animations / Fast Forward: Como agora temos delays reais no tableStore para puxar as cartas, seria útil um toggle para "Zerar Delays", permitindo que o jogo rode instantaneamente durante os testes de estresse.
+
+Forçar Payout: Muda o estado direto para PAYOUT para você testar os ajustes finos no DopaminePopup e nas cores do banner de vitória/derrota.
+
+
+## 4. Raio-X do Estado (State Inspector)
+Uma área em formato de código (JSON) que mostra em tempo real as variáveis invisíveis que afetam a UI: activeHandIndex, o tamanho atual do playerHands, e o score atual do Dealer. Isso mata a dúvida se o erro é visual (Tailwind/React) ou estrutural (Engine).

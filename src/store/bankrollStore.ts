@@ -7,7 +7,7 @@ interface BankrollStore {
 }
 
 export const useBankrollStore = create<BankrollStore>((set, get) => ({
-  balance: 1000, // Saldo inicial para a v0.1.0-alpha
+  balance: 40, // Saldo inicial para a v0.1.0-alpha
   // ! VER SE É O MELHOR LUGAR PARA SETAR 
   
   deduct: (amount: number) => {
