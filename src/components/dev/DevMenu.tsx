@@ -4,9 +4,6 @@ import { useState } from 'react'
 import { DevBankroll } from './DevBankroll'
 import { DevHandForcer } from './DevHandForcer'
 
-// MENU CENTRAL DEV DO BLACKJACK
-
-
 export function DevMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const isDev = process.env.NODE_ENV === 'development'
@@ -14,9 +11,24 @@ export function DevMenu() {
   if (!isDev) return null
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 font-mono">
+    // Mudamos de bottom-4 para top-24 e adicionamos flex-col items-end
+    <div className="fixed top-24 right-4 z-50 font-mono flex flex-col items-end">
+      
+      {/* Botão Flutuante (agora fica em cima) */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white p-3 rounded-full shadow-lg flex items-center justify-center transition-all"
+        title="Open Dev Panel"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+      </button>
+
+      {/* Painel (agora abre para baixo, com mt-3) */}
       {isOpen && (
-        <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-lg shadow-2xl mb-3 w-72">
+        <div className="bg-zinc-950 border border-zinc-800 p-4 rounded-lg shadow-2xl mt-3 w-72">
           <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
             <h2 className="text-white font-bold text-sm tracking-widest">DEV PANEL</h2>
             <button 
@@ -35,16 +47,6 @@ export function DevMenu() {
         </div>
       )}
       
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white p-3 rounded-full shadow-lg ml-auto flex items-center justify-center transition-all"
-        title="Open Dev Panel"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="4 17 10 11 4 5"></polyline>
-          <line x1="12" y1="19" x2="20" y2="19"></line>
-        </svg>
-      </button>
     </div>
   )
 }
